@@ -12,6 +12,8 @@ export async function getSpecKnowledge(
 ): Promise<string> {
   const supabase = createServiceClient()
 
+  console.log('[SpecKnowledge] Checking cache for:', specKey, heroTalent)
+
   const { data } = await supabase
     .from('spec_knowledge')
     .select('knowledge')
@@ -22,26 +24,40 @@ export async function getSpecKnowledge(
     .limit(1)
     .maybeSingle()
 
+  console.log('[SpecKnowledge] Cache hit:', data !== null)
+
   if (data !== null) {
     return (data as { knowledge: string }).knowledge
   }
 
-  const result = await fetchSpecGuideContext(specName, heroTalent, [])
+  const knowledgePromise = fetchSpecGuideContext(specName, heroTalent, [])
+  const timeoutPromise = new Promise<string>((resolve) => setTimeout(() => resolve(''), 15000))
 
-  if (result === '') return ''
+  let result: string
+  try {
+    result = await Promise.race([knowledgePromise, timeoutPromise])
+  } catch {
+    result = ''
+  }
 
-  const expiresAt = new Date(Date.now() + THIRTY_DAYS_MS).toISOString()
+  console.log('[SpecKnowledge] Storing knowledge, length:', result.length)
 
-  await supabase.from('spec_knowledge').upsert(
+  const { error: upsertError } = await supabase.from('spec_knowledge').upsert(
     {
       spec_key: specKey,
       hero_talent: heroTalent,
       patch_version: patchVersion,
       knowledge: result,
-      expires_at: expiresAt,
+      expires_at: new Date(Date.now() + THIRTY_DAYS_MS).toISOString(),
     },
     { onConflict: 'spec_key,hero_talent,patch_version' },
   )
+
+  if (upsertError) {
+    console.error('[SpecKnowledge] Upsert error:', upsertError)
+  }
+
+  console.log('[SpecKnowledge] Upsert result:', upsertError ?? 'success')
 
   return result
 }
