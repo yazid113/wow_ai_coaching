@@ -214,12 +214,11 @@ export async function analyzeLog(input: AnalyzeInput): Promise<AnalyzeOutput> {
   // Step 7 — validate response
   let validatedResult: AnalysisResponse
   try {
-    const stripped = rawContent
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/```\s*$/i, '')
-      .trim()
-    const parsed = JSON.parse(stripped) as unknown
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) {
+      throw new Error('No JSON object found in response')
+    }
+    const parsed = JSON.parse(jsonMatch[0]) as unknown
     const schemaResult = AnalysisResponseSchema.safeParse(parsed)
     if (!schemaResult.success) {
       throw new Error(`Schema validation failed: ${schemaResult.error.message}`)

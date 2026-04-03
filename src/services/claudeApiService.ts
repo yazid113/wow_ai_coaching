@@ -28,10 +28,7 @@ export async function callClaudeAnalysis(
       model: CLAUDE_MODEL,
       max_tokens: CLAUDE_MAX_TOKENS,
       system: `${systemPrompt}\n\n${WEB_SEARCH_INSTRUCTION}`,
-      messages: [
-        { role: 'user', content: userPrompt },
-        { role: 'assistant', content: '{' },
-      ],
+      messages: [{ role: 'user', content: userPrompt }],
       tools: [
         { type: 'web_search_20250305', name: 'web_search' },
       ] as unknown as Anthropic.Messages.ToolUnion[],
@@ -50,6 +47,5 @@ export async function callClaudeAnalysis(
   if (lastBlock === undefined || lastBlock.trim().length === 0) {
     throw new Error('Claude returned no text content')
   }
-  const fullResponse = '{' + lastBlock
-  return fullResponse
+  return lastBlock
 }
