@@ -128,8 +128,8 @@ export function useWclAnalyze(
           wclError: 'Network error — please try again.',
         }))
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [handleWclParsed],
   )
 
@@ -164,8 +164,8 @@ export function useWclAnalyze(
           wclError: 'Network error — please try again.',
         }))
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [state.wclUrl, handleWclParsed],
   )
 

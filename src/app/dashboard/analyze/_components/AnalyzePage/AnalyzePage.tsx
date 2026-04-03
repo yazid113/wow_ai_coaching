@@ -10,23 +10,14 @@ import { CLASS_COLORS, WOW_CLASSES } from '../ClassSelector/classSelector.consta
 import { FightContext } from '../FightContext/FightContext'
 import { LogInput } from '../LogInput/LogInput'
 
+import { LoadingView } from './_components/LoadingView'
+import { ProgressBar } from './_components/ProgressBar'
+import { LOADING_TIPS } from './analyzePage.constants'
 import { useAnalyze } from './hooks/useAnalyze'
 
 const MAX_LOG_LENGTH = 500_000
 
-const STEPS = ['Select Spec', 'Paste Log', 'Results'] as const
 const STEP_INDEX: Record<string, number> = { select: 0, input: 1, analyzing: 1, result: 2 }
-
-const TIPS = [
-  'Reading your cast timeline...',
-  'Checking cooldown alignment...',
-  'Evaluating proc response times...',
-  'Comparing against SimulationCraft APL...',
-  'Measuring rotational efficiency...',
-  'Analysing buff and debuff windows...',
-  'Reviewing resource management...',
-  'Calculating performance score...',
-]
 
 function getSpecLabel(specKey: string | null, heroTalentKey: string | null) {
   for (const cls of WOW_CLASSES) {
@@ -58,7 +49,7 @@ export function AnalyzePage() {
 
   useEffect(() => {
     if (step !== 'analyzing') return
-    const id = setInterval(() => setTipIndex((i) => (i + 1) % TIPS.length), 3000)
+    const id = setInterval(() => setTipIndex((i) => (i + 1) % LOADING_TIPS.length), 3000)
     return () => clearInterval(id)
   }, [step])
 
@@ -76,49 +67,7 @@ export function AnalyzePage() {
           .print-section { page-break-inside: avoid; }
         }
       `}</style>
-      {/* Progress bar */}
-      <div className="no-print border-b border-[#30363d] bg-[#161b22] px-6 py-4">
-        <div className="mx-auto flex max-w-2xl items-center">
-          {STEPS.map((label, i) => (
-            <div key={label} className="flex items-center">
-              <div className="flex items-center gap-2">
-                <div
-                  className={cn(
-                    'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all',
-                    i < currentStepIndex
-                      ? 'bg-[#c8a96e] text-[#0d1117]'
-                      : i === currentStepIndex
-                        ? 'border-2 border-[#c8a96e] text-[#c8a96e]'
-                        : 'border border-[#30363d] text-gray-500',
-                  )}
-                >
-                  {i < currentStepIndex ? '✓' : i + 1}
-                </div>
-                <span
-                  className={cn(
-                    'text-sm',
-                    i < currentStepIndex
-                      ? 'text-[#c8a96e]'
-                      : i === currentStepIndex
-                        ? 'font-medium text-white'
-                        : 'text-gray-500',
-                  )}
-                >
-                  {label}
-                </span>
-              </div>
-              {i < STEPS.length - 1 && (
-                <div
-                  className={cn(
-                    'mx-4 h-px w-16',
-                    i < currentStepIndex ? 'bg-[#c8a96e]' : 'bg-[#30363d]',
-                  )}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      <ProgressBar currentStepIndex={currentStepIndex} />
 
       {/* Content */}
       <div className="mx-auto max-w-2xl px-4 py-10">
@@ -211,20 +160,7 @@ export function AnalyzePage() {
         )}
 
         {/* Step: analyzing */}
-        {step === 'analyzing' && (
-          <div className="flex flex-col items-center gap-6 py-24 text-center">
-            <div className="relative flex items-center justify-center">
-              <div className="h-24 w-24 animate-pulse rounded-full bg-[#c8a96e]/20" />
-              <div className="absolute h-10 w-10 rounded-full bg-[#c8a96e]/60" />
-            </div>
-            <div>
-              <p className="text-xl font-semibold text-white">Analysing your rotation…</p>
-              <p className="mt-3 text-sm text-gray-400 transition-opacity duration-500">
-                {TIPS[tipIndex]}
-              </p>
-            </div>
-          </div>
-        )}
+        {step === 'analyzing' && <LoadingView tipIndex={tipIndex} />}
 
         {/* Step: result */}
         {step === 'result' && state.result !== null && (
