@@ -28,7 +28,10 @@ export async function callClaudeAnalysis(
       model: CLAUDE_MODEL,
       max_tokens: CLAUDE_MAX_TOKENS,
       system: `${systemPrompt}\n\n${WEB_SEARCH_INSTRUCTION}`,
-      messages: [{ role: 'user', content: userPrompt }],
+      messages: [
+        { role: 'user', content: userPrompt },
+        { role: 'assistant', content: '{' },
+      ],
       tools: [
         { type: 'web_search_20250305', name: 'web_search' },
       ] as unknown as Anthropic.Messages.ToolUnion[],
@@ -43,19 +46,10 @@ export async function callClaudeAnalysis(
     .map((block: { type: string; text?: string }) => block.text ?? '')
     .filter((text: string) => text.trim().length > 0)
 
-  // Find the block containing the JSON response
-  // Try blocks in reverse order (last first)
-  let fullResponse = ''
-  for (let i = textBlocks.length - 1; i >= 0; i--) {
-    const block = textBlocks[i] ?? ''
-    if (block.includes('"score"') && block.includes('"errors"')) {
-      fullResponse = block
-      break
-    }
-  }
-
-  if (fullResponse.length === 0) {
+  const lastBlock = textBlocks[textBlocks.length - 1]
+  if (lastBlock === undefined || lastBlock.trim().length === 0) {
     throw new Error('Claude returned no text content')
   }
+  const fullResponse = '{' + lastBlock
   return fullResponse
 }
