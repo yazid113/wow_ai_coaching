@@ -225,7 +225,9 @@ export async function analyzeLog(input: AnalyzeInput): Promise<AnalyzeOutput> {
       throw new Error(`Schema validation failed: ${schemaResult.error.message}`)
     }
     validatedResult = schemaResult.data
-  } catch {
+  } catch (parseError) {
+    console.error('[AnalyzeService] JSON parse failed:', parseError)
+    console.error('[AnalyzeService] Raw response that failed:', rawContent.slice(0, 500))
     return {
       score: 75,
       grade: 'B' as Grade,
