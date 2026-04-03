@@ -1,0 +1,15 @@
+<svg width="200" height="40" viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="none" stroke="#c8a96e" stroke-width="1.5" stroke-linejoin="round"/>
+  <polygon points="20,7 32,14 32,26 20,33 8,26 8,14" fill="#c8a96e" opacity="0.08" stroke="#c8a96e" stroke-width="0.5" stroke-linejoin="round"/>
+  <line x1="4" y1="11" x2="8" y2="14" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="36" y1="11" x2="32" y2="14" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="4" y1="29" x2="8" y2="26" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="36" y1="29" x2="32" y2="26" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="20" y1="2" x2="20" y2="7" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="20" y1="38" x2="20" y2="33" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <path d="M20 30 C16 25, 14 22, 15 18 C16 15, 18 13, 20 12 C19 14, 19.5 16, 21 17 C22 13, 24 11, 26 10 C26 14, 24 17, 23 19 C24.5 17, 26 15, 27 14 C27.5 18, 26 22, 24 24.5 C22.5 26.5, 21 28, 20 30Z" fill="#c8a96e"/>
+  <path d="M20 27 C18 23, 17 21, 17.5 18.5 C18 17, 19 16, 20 15.5 C19.5 17, 20 18.5, 21 18.5 C21.5 17, 22.5 15.5, 23 15 C23.5 17, 23 20, 21.5 21.5 C22 20.5, 23 19.5, 23.5 19 C23.5 21, 23 23, 21.5 24.5 C21 25.5, 20.5 26, 20 27Z" fill="#ff8c42"/>
+  <text x="48" y="15" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#c8a96e" letter-spacing="-0.3">Wow</text>
+  <text x="48" y="15" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#ffffff" letter-spacing="-0.3" dx="26">Analyzer</text>
+  <text x="48" y="27" font-family="Arial, sans-serif" font-size="7" fill="#8b949e" letter-spacing="1.5">AI ROTATION COACHING</text>
+</svg>

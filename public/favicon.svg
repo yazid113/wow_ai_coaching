@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" fill="#0d1117"/>
+  <polygon points="32,4 56,18 56,46 32,60 8,46 8,18" fill="none" stroke="#c8a96e" stroke-width="2" stroke-linejoin="round"/>
+  <polygon points="32,12 50,22 50,42 32,52 14,42 14,22" fill="#c8a96e" opacity="0.08" stroke="#c8a96e" stroke-width="0.5" stroke-linejoin="round"/>
+  <line x1="8" y1="18" x2="14" y2="22" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="56" y1="18" x2="50" y2="22" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="8" y1="46" x2="14" y2="42" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="56" y1="46" x2="50" y2="42" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="32" y1="4" x2="32" y2="12" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <line x1="32" y1="60" x2="32" y2="52" stroke="#c8a96e" stroke-width="0.5" opacity="0.4"/>
+  <path d="M32 46 C27 40, 24 36, 25 30 C26 26, 29 24, 32 22 C30 25, 31 27, 33 28 C35 23, 37 20, 40 19 C40 25, 38 29, 36 31 C38 29, 40 27, 41 25 C42 31, 40 37, 37 40 C35 42, 33 44, 32 46Z" fill="#c8a96e"/>
+  <path d="M32 42 C29 37, 27 33, 28 30 C29 28, 30 27, 32 26 C31 28, 32 30, 33 30 C34 28, 36 26, 37 25 C38 28, 37 32, 35 34 C36 32.5, 37 31, 38 30 C38 33, 37 37, 35 38.5 C33.5 40, 32.5 41, 32 42Z" fill="#ff8c42"/>
+</svg>
