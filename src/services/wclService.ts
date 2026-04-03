@@ -1,6 +1,12 @@
 import type { ParsedLog } from '@/lib/specRules/types'
 import { fetchAllEvents, fetchAllFights, fetchReportMeta, WclApiError } from '@/lib/wcl/wclClient'
-import { parseWclEvents, resolveTalentNames, resolveSpellNames } from '@/lib/wcl/wclParser'
+import { WCL_SUBTYPE_MAP, WOW_SPEC_IDS } from '@/lib/wcl/wclConstants'
+import {
+  detectFightContext,
+  parseWclEvents,
+  resolveTalentNames,
+  resolveSpellNames,
+} from '@/lib/wcl/wclParser'
 import { parseWclUrl } from '@/lib/wcl/wclUrlParser'
 import { syncSpells } from '@/services/spellSyncService'
 
@@ -22,75 +28,16 @@ export interface WclFetchResult {
   itemLevel?: number | undefined
   talentTree?: Array<{ id: number; rank: number; nodeID: number; name: string }> | undefined
   availablePlayers?: { id: number; name: string; subType: string; specId?: number }[]
+  detectedFightType?: 'raid' | 'mythicplus' | 'dungeon' | 'targetdummy'
+  detectedTargetCount?: number
   error?: string
   needsPlayerSelection: boolean
-}
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const WOW_SPEC_IDS: Record<string, number[]> = {
-  'mage-fire': [63],
-  'mage-frost': [64],
-  'mage-arcane': [62],
-  'warlock-affliction': [265],
-  'warlock-demonology': [266],
-  'warlock-destruction': [267],
-  'paladin-holy': [65],
-  'paladin-protection': [66],
-  'paladin-retribution': [70],
-  'hunter-beastmastery': [253],
-  'hunter-marksmanship': [254],
-  'hunter-survival': [255],
-  'warrior-arms': [71],
-  'warrior-fury': [72],
-  'warrior-protection': [73],
-  'deathknight-blood': [250],
-  'deathknight-frost': [251],
-  'deathknight-unholy': [252],
-  'druid-balance': [102],
-  'druid-feral': [103],
-  'druid-guardian': [104],
-  'druid-restoration': [105],
-  'rogue-assassination': [259],
-  'rogue-outlaw': [260],
-  'rogue-subtlety': [261],
-  'priest-discipline': [256],
-  'priest-holy': [257],
-  'priest-shadow': [258],
-  'shaman-elemental': [262],
-  'shaman-enhancement': [263],
-  'shaman-restoration': [264],
-  'monk-brewmaster': [268],
-  'monk-mistweaver': [270],
-  'monk-windwalker': [269],
-  'demonhunter-havoc': [577],
-  'demonhunter-vengeance': [581],
-  'demonhunter-devourer': [1473],
-  'evoker-devastation': [1467],
-  'evoker-preservation': [1468],
-  'evoker-augmentation': [1473],
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function errorResult(error: string): WclFetchResult {
   return { success: false, error, needsPlayerSelection: false }
-}
-
-const WCL_SUBTYPE_MAP: Record<string, string> = {
-  deathknight: 'DeathKnight',
-  demonhunter: 'DemonHunter',
-  mage: 'Mage',
-  warrior: 'Warrior',
-  paladin: 'Paladin',
-  hunter: 'Hunter',
-  rogue: 'Rogue',
-  priest: 'Priest',
-  shaman: 'Shaman',
-  monk: 'Monk',
-  druid: 'Druid',
-  warlock: 'Warlock',
-  evoker: 'Evoker',
 }
 
 function getWclSubTypeFromSpecKey(specKey: string): string | null {
@@ -211,10 +158,18 @@ export async function fetchAndParseWclLog(input: WclFetchInput): Promise<WclFetc
     spellNames,
   )
 
-  // 8. Fire-and-forget spell sync
+  // 8. Detect fight context
+  const fightContext = detectFightContext(
+    castEvents,
+    buffEvents,
+    fight.name,
+    fight.endTime - fight.startTime,
+  )
+
+  // 9. Fire-and-forget spell sync
   syncSpells(spellIds).catch(() => undefined)
 
-  // 9. Return result
+  // 10. Return result
   return {
     success: true,
     parsedLog,
@@ -223,6 +178,8 @@ export async function fetchAndParseWclLog(input: WclFetchInput): Promise<WclFetc
     fightDurationSeconds: Math.round((fight.endTime - fight.startTime) / 1000),
     ...(itemLevel !== undefined && { itemLevel }),
     ...(talentTree !== undefined && { talentTree }),
+    detectedFightType: fightContext.fightType,
+    detectedTargetCount: fightContext.targetCount,
     needsPlayerSelection: false,
   }
 }

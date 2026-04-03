@@ -18,6 +18,8 @@ interface WclParseResponse {
   fightName?: string
   itemLevel?: number
   talentTree?: WclTalentEntry[]
+  detectedFightType?: 'raid' | 'mythicplus' | 'dungeon' | 'targetdummy'
+  detectedTargetCount?: number
   error?: string
 }
 
@@ -69,9 +71,14 @@ export function useWclAnalyze(
           wclSourceId: sourceId,
           bossName: parsed.fightName,
           ...(parsed.talentTree !== undefined && { talentTree: parsed.talentTree }),
-          ...(parsed.itemLevel !== undefined && {
-            fightContext: { ...prev.fightContext, itemLevel: parsed.itemLevel },
-          }),
+          fightContext: {
+            ...prev.fightContext,
+            ...(parsed.itemLevel !== undefined && { itemLevel: parsed.itemLevel }),
+            ...(parsed.detectedFightType !== undefined && { fightType: parsed.detectedFightType }),
+            ...(parsed.detectedTargetCount !== undefined && {
+              targetCount: parsed.detectedTargetCount,
+            }),
+          },
         }))
         submitAnalysis(selectedSpecKey, selectedHeroTalent, {
           parsedLog: parsed.parsedLog as ParsedLog,

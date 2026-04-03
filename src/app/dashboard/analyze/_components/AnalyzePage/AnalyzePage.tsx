@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils'
 import { AnalysisResult } from '../AnalysisResult/AnalysisResult'
 import { ClassSelector } from '../ClassSelector/ClassSelector'
 import { CLASS_COLORS, WOW_CLASSES } from '../ClassSelector/classSelector.constants'
-import { FightContext } from '../FightContext/FightContext'
 import { LogInput } from '../LogInput/LogInput'
 
 import { LoadingView } from './_components/LoadingView'
@@ -35,7 +34,6 @@ export function AnalyzePage() {
     state,
     handleSpecSelect,
     handleHeroTalentSelect,
-    handleFightContextChange,
     handleLogReady,
     handleReset,
     goToInput,
@@ -138,7 +136,6 @@ export function AnalyzePage() {
                 ← Back
               </button>
             </div>
-            <FightContext value={state.fightContext} onChange={handleFightContextChange} />
             <LogInput
               onLogReady={handleLogReady}
               disabled={false}

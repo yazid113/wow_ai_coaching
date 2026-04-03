@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/serviceClient'
 import { formatTimestamp } from '@/lib/utils'
 
 import type { WclActor, WclFight, WclRawEvent } from './wclClient'
+import { AOE_INDICATORS, RAID_BOSSES } from './wclConstants'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -96,6 +97,39 @@ export function parseWclEvents(
     fightDurationMs,
     playerName,
   }
+}
+
+// ─── Fight context detection ──────────────────────────────────────────────────
+
+export function detectFightContext(
+  castEvents: WclRawEvent[],
+  _buffEvents: WclRawEvent[],
+  fightName: string,
+  fightDurationMs: number,
+): {
+  fightType: 'raid' | 'mythicplus' | 'dungeon' | 'targetdummy'
+  targetCount: number
+  bossName: string
+} {
+  const fightType: 'raid' | 'mythicplus' | 'dungeon' | 'targetdummy' = (
+    RAID_BOSSES as readonly string[]
+  ).includes(fightName)
+    ? 'raid'
+    : fightDurationMs < 30000
+      ? 'targetdummy'
+      : 'dungeon'
+
+  const earlyCasts = castEvents.filter((e) => e.timestamp < 30000)
+  const uniqueTargets = new Set(earlyCasts.map((e) => e.targetID).filter((id) => id !== -1)).size
+
+  let targetCount = uniqueTargets <= 1 ? 1 : uniqueTargets <= 3 ? uniqueTargets : 5
+
+  const hasAoe = castEvents.some((e) => AOE_INDICATORS.has(String(e.abilityGameID)))
+  if (hasAoe) {
+    targetCount = Math.max(targetCount, 3)
+  }
+
+  return { fightType, targetCount, bossName: fightName }
 }
 
 export async function resolveTalentNames(

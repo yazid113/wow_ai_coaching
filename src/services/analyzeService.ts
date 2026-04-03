@@ -9,6 +9,7 @@ import { createServiceClient } from '@/lib/supabase/serviceClient'
 
 import { getSpecRotation } from './aplSyncService'
 import { callClaudeAnalysis } from './claudeApiService'
+import { getSpecKnowledge } from './specKnowledgeService'
 import { syncTalentSpells } from './talentSyncService'
 
 // ─── Error ────────────────────────────────────────────────────────────────────
@@ -176,6 +177,12 @@ export async function analyzeLog(input: AnalyzeInput): Promise<AnalyzeOutput> {
   const fightDurationSeconds =
     fightDurationSecondsOverride ?? Math.round(log.fightDurationMs / 1_000)
   const timeline = buildCastTimeline(log)
+  const guideContext = await getSpecKnowledge(
+    input.specKey,
+    input.heroTalentTree ?? '',
+    resolvedSpec.specName,
+    '11.1',
+  )
   const fightCtx = {
     ...(input.fightType !== undefined && { fightType: input.fightType }),
     ...(input.targetCount !== undefined && { targetCount: input.targetCount }),
@@ -184,6 +191,7 @@ export async function analyzeLog(input: AnalyzeInput): Promise<AnalyzeOutput> {
     ...(input.talentTree !== undefined && {
       talentTree: input.talentTree.map((t) => ({ ...t, name: t.name ?? `Unknown (ID: ${t.id})` })),
     }),
+    ...(guideContext !== '' && { guideContext }),
   }
   const systemPrompt = buildSystemPrompt(resolvedSpec, fightCtx)
   const userPrompt = buildUserPrompt({
