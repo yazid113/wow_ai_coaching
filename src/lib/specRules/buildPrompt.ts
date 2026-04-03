@@ -1,4 +1,3 @@
-import { formatAllContextBlocks } from '@/lib/engine/aplContextBuilder'
 import type { EngineOutput } from '@/lib/engine/engine.types'
 
 import { buildFightContextSection, buildGuideSection, buildTalentSection } from './promptSections'
@@ -54,6 +53,7 @@ export function buildSystemPrompt(
     guideContext !== undefined && guideContext.length > 0 ? buildGuideSection(guideContext) : ''
 
   const corePrompt = [
+    'You are a WoW rotation analyzer. Always respond with valid JSON only. Never write any text before the opening { of the JSON response.',
     `You are an expert World of Warcraft performance coach specialising in ${spec.displayName} (patch ${spec.patchVersion}).`,
     `Your job is to analyse a player's combat log and give them clear, actionable feedback that helps them improve.`,
     '',
@@ -129,41 +129,36 @@ export function buildUserPrompt(input: {
   fightContext?: FightContextInput
 }): string {
   const { spec, engineOutput, fightDurationSeconds, timeline } = input
-  const heroTalentLine = engineOutput.heroTalentTree ?? 'not specified'
-  const phaseNames = engineOutput.fightPhases.map((p) => p.listName).join(', ')
-  const fightContextSection = [
-    '## Fight Context',
-    `Analyzing ${spec.displayName} — ${fightDurationSeconds}s fight`,
-    `Hero Talent: ${heroTalentLine}`,
-    `Phases detected: ${engineOutput.fightPhases.length} (${phaseNames})`,
-  ].join('\n')
-  const { deterministicViolations } = engineOutput
-  const confirmedErrors =
-    deterministicViolations.length > 0
-      ? [
-          '## CONFIRMED ROTATION ERRORS (explain these to the player):',
-          ...deterministicViolations.map((v) => `- [${v.timestamp}] ${v.context}`),
-        ].join('\n')
-      : '## CONFIRMED ROTATION ERRORS\nNone detected — look for subtler issues in the APL analysis below.'
-  const aplSection = [
-    '## APL PHASE ANALYSIS (evaluate priority violations):',
-    formatAllContextBlocks(engineOutput.aplContextBlocks),
-  ].join('\n')
-  return [
-    fightContextSection,
-    '',
-    confirmedErrors,
-    '',
-    aplSection,
-    '',
-    ['## Cast Timeline', timeline].join('\n'),
-    '',
-    [
-      '## Your Task',
-      'For each confirmed error above, explain what happened, why it matters, and how to fix it.',
-      'For each APL phase, identify any priority violations where the player cast a lower-priority spell when a higher-priority spell was available.',
-      'Sound like a helpful raid leader — not a robot.',
-      'Return your analysis as valid JSON matching the schema in your instructions.',
-    ].join('\n'),
-  ].join('\n')
+  const heroTalent = engineOutput.heroTalentTree ?? 'not specified'
+  const fightType = input.fightContext?.fightType ?? 'unknown'
+  const targetCount = input.fightContext?.targetCount ?? 1
+
+  return `Analyze the cast log below and respond with ONLY a JSON object. No preamble. No explanation before the JSON. No spell ID mapping. Start your response with { and end with }.
+
+The JSON must follow this exact schema:
+{
+  "score": <number 0-100>,
+  "grade": <"S"|"A"|"B"|"C"|"D">,
+  "summary": <string>,
+  "errors": [
+    {
+      "severity": <"critical"|"moderate"|"minor">,
+      "title": <string>,
+      "explanation": <string>,
+      "timestamp": <string>,
+      "ruleId": <empty string if no rule matched>
+    }
+  ],
+  "wins": [<string>],
+  "top_focus": <string>
+}
+
+Cast log data:
+${timeline}
+
+Spec: ${spec.specKey}
+Hero talent: ${heroTalent}
+Fight duration: ${fightDurationSeconds}s
+Fight type: ${fightType}
+Targets: ${targetCount}`
 }

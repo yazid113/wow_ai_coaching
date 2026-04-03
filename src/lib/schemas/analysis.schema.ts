@@ -50,15 +50,14 @@ export type Severity = z.infer<typeof SeveritySchema>
 // ─── Error Entry ──────────────────────────────────────────────────────────────
 
 export const AnalysisErrorSchema = z.object({
-  /** Deterministic rule ID that produced this error, or empty string for AI-only findings. */
-  ruleId: z.string(),
   severity: SeveritySchema,
   /** Short label shown in the UI error list. */
   title: z.string(),
   /** Player-friendly explanation of what went wrong and why it matters. */
   explanation: z.string(),
-  /** Formatted timestamp from the combat log, or null when no specific cast is implicated. */
-  timestamp: z.string().nullable(),
+  timestamp: z.string().optional(),
+  /** Deterministic rule ID that produced this error, if any. */
+  ruleId: z.string().optional(),
 })
 
 export type AnalysisError = z.infer<typeof AnalysisErrorSchema>
