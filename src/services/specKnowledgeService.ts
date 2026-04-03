@@ -24,10 +24,11 @@ export async function getSpecKnowledge(
     .limit(1)
     .maybeSingle()
 
-  console.log('[SpecKnowledge] Cache hit:', data !== null)
+  const row = data as { knowledge: string } | null
+  console.log('[SpecKnowledge] Cache hit:', (row?.knowledge.length ?? 0) > 50)
 
-  if (data !== null) {
-    return (data as { knowledge: string }).knowledge
+  if (row?.knowledge && row.knowledge.length > 50) {
+    return row.knowledge
   }
 
   const knowledgePromise = fetchSpecGuideContext(specName, heroTalent, [])
