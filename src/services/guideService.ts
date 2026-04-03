@@ -25,7 +25,6 @@ export async function fetchSpecGuideContext(
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 800,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [
           {
             role: 'user',
