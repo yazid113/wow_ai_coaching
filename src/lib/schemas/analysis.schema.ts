@@ -55,7 +55,11 @@ export const AnalysisErrorSchema = z.object({
   title: z.string(),
   /** Player-friendly explanation of what went wrong and why it matters. */
   explanation: z.string(),
-  timestamp: z.string().optional(),
+  timestamp: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((v) => v ?? undefined),
   /** Deterministic rule ID that produced this error, if any. */
   ruleId: z.string().optional(),
 })

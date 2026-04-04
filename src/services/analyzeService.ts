@@ -1,3 +1,4 @@
+import { env } from '@/config/env'
 import { runEngine } from '@/lib/engine/specRulesEngine'
 import { parseLog } from '@/lib/logParser'
 import { AnalysisResponseSchema } from '@/lib/schemas/analysis.schema'
@@ -181,7 +182,7 @@ export async function analyzeLog(input: AnalyzeInput): Promise<AnalyzeOutput> {
     input.specKey,
     input.heroTalentTree ?? '',
     resolvedSpec.specName,
-    '11.1',
+    env.app.patchVersion,
   )
   const fightCtx = {
     ...(input.fightType !== undefined && { fightType: input.fightType }),

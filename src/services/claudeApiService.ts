@@ -7,9 +7,6 @@ import { env } from '@/config/env'
 const CLAUDE_MODEL = 'claude-opus-4-6'
 const CLAUDE_MAX_TOKENS = 2000
 
-const WEB_SEARCH_INSTRUCTION =
-  'You have access to web search.\nSTRICT LIMIT: Maximum 1 search total.\nSearch ONLY if you cannot determine whether Demonic Tyrant is dynamic or snapshot in Midnight.\nAfter 1 search, write the JSON immediately.\nDo not search for anything else.'
-
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
@@ -27,11 +24,8 @@ export async function callClaudeAnalysis(
     message = (await client.messages.create({
       model: CLAUDE_MODEL,
       max_tokens: CLAUDE_MAX_TOKENS,
-      system: `${systemPrompt}\n\n${WEB_SEARCH_INSTRUCTION}`,
+      system: `CRITICAL: You must respond with a valid JSON object only. Do not write any text, explanation, preamble, or spell ID mappings before the JSON. Do not write anything after the JSON. Your entire response must start with { and end with }. Any text outside the JSON will cause a parse failure.\n\n${systemPrompt}`,
       messages: [{ role: 'user', content: userPrompt }],
-      tools: [
-        { type: 'web_search_20250305', name: 'web_search' },
-      ] as unknown as Anthropic.Messages.ToolUnion[],
     })) as Anthropic.Message
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
@@ -47,5 +41,11 @@ export async function callClaudeAnalysis(
   if (lastBlock === undefined || lastBlock.trim().length === 0) {
     throw new Error('Claude returned no text content')
   }
-  return lastBlock
+
+  // Strip any preamble text before the opening brace
+  const jsonStart = lastBlock.indexOf('{')
+  if (jsonStart === -1) {
+    throw new Error('No JSON object found in Claude response')
+  }
+  return lastBlock.slice(jsonStart)
 }
