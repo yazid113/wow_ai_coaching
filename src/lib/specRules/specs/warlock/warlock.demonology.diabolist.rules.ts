@@ -111,7 +111,7 @@ export function detectTyrantLowDemonCount(log: ParsedLog): DetectedError[] {
 
   if (tyrantCasts.length === 0) return []
 
-  const SUMMON_SPELL_IDS = new Set([
+  const SUMMON_SPELL_IDS = new Set<string>([
     DEMO_WARLOCK_SPELL_IDS.HAND_OF_GULDAN,
     DEMO_WARLOCK_SPELL_IDS.CALL_DREADSTALKERS,
     DEMO_WARLOCK_SPELL_IDS.VILEFIEND,
