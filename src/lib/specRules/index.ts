@@ -39,6 +39,7 @@ import { enhancementShaman } from './specs/shaman/shaman.enhancement.base'
 import { restorationShaman } from './specs/shaman/shaman.resto.base'
 import { afflictionWarlock } from './specs/warlock/warlock.affliction.base'
 import { demonologyWarlock } from './specs/warlock/warlock.demonology.base'
+import { demonologyWarlockDiabolist } from './specs/warlock/warlock.demonology.diabolist'
 import { destructionWarlock } from './specs/warlock/warlock.destruction.base'
 import { armsWarrior } from './specs/warrior/warrior.arms.base'
 import { furyWarrior } from './specs/warrior/warrior.fury.base'
@@ -113,6 +114,8 @@ const OVERLAY_REGISTRY: Record<string, HeroTalentOverlay> = {
   [`${fireMageBase.specKey}:${fireMageSpellslinger.heroTalentTree}`]: fireMageSpellslinger,
   [`${frostMageBase.specKey}:${frostMageFrostfire.heroTalentTree}`]: frostMageFrostfire,
   [`${frostMageBase.specKey}:${frostMageSpellfrost.heroTalentTree}`]: frostMageSpellfrost,
+  [`${demonologyWarlock.specKey}:${demonologyWarlockDiabolist.heroTalentTree}`]:
+    demonologyWarlockDiabolist,
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────

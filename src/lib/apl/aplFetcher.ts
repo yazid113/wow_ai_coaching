@@ -27,7 +27,7 @@ const SIMC_RAW_BASE = 'https://raw.githubusercontent.com/simulationcraft/simc/mi
 // Missing: healer specs, some tank variants.
 // patchVersion stored in spec_rotations serves as the audit trail for which
 // tier a given sync was sourced from.
-const APL_PATHS: Record<string, string> = {
+export const APL_PATHS: Record<string, string> = {
   'mage-fire': '/profiles/MID1/MID1_Mage_Fire.simc',
   'mage-frost': '/profiles/MID1/MID1_Mage_Frost.simc',
   'mage-arcane': '/profiles/MID1/MID1_Mage_Arcane.simc',
@@ -47,6 +47,7 @@ const APL_PATHS: Record<string, string> = {
   'deathknight-blood': '/profiles/MID1/MID1_Death_Knight_Blood.simc',
   'deathknight-frost': '/profiles/MID1/MID1_Death_Knight_Frost.simc',
 
+  'druid-balance': '/profiles/MID1/MID1_Druid_Balance.simc',
   'druid-feral': '/profiles/MID1/MID1_Druid_Feral.simc',
   'druid-guardian': '/profiles/MID1/MID1_Druid_Guardian.simc',
 

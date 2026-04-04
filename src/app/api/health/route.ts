@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { SUPPORTED_PATCH } from '@/lib/constants'
+import { env } from '@/config/env'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET() {
@@ -13,7 +13,7 @@ export async function GET() {
       return NextResponse.json({ status: 'error', message: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ status: 'ok', db: 'connected', patch: SUPPORTED_PATCH })
+    return NextResponse.json({ status: 'ok', db: 'connected', patch: env.app.patchVersion })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return NextResponse.json({ status: 'error', message }, { status: 500 })

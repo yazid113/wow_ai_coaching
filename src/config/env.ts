@@ -28,5 +28,6 @@ export const env = {
     url: process.env['NEXT_PUBLIC_APP_URL'] ?? 'http://localhost:3000',
     nodeEnv: process.env['NODE_ENV'],
     syncSecret: requireEnv('SYNC_SECRET'),
+    patchVersion: requireEnv('PATCH_VERSION'),
   },
 } as const
